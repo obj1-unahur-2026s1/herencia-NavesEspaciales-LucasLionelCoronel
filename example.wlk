@@ -29,7 +29,18 @@ class Nave {
     combustible = (combustible - cuanto).min(0)
   }
 
-  method prepararViaje() //Unicamente es como decir que este metodo lo tienen que tener todos los hijos 
+  method prepararViaje(){
+    self.cargarCombustible(30000)
+    self.acelerar(5000)
+  } //Unicamente es como decir que este metodo lo tienen que tener todos los hijos
+
+  method estaTranquilo(){
+    return combustible >= 40000 and velocidad <= 12000
+  }
+
+  method recibirAmenaza() {
+    
+  }
 }
 
 class NaveBaliza inherits Nave {
@@ -42,7 +53,12 @@ class NaveBaliza inherits Nave {
  override method prepararViaje() {//Indica que esta sobreescrito
     baliza = "Verde"
     self.ponerseParaleloAlSol()
-  } 
+    super()
+  }
+
+  override method estaTranquilo() {
+     return super() and baliza != "Rojo"
+    } 
 }
 
 class NavePasajero inherits Nave {
@@ -74,8 +90,10 @@ class NavePasajero inherits Nave {
     self.cargarComida(4*cantPasajeros)
     self.cargarBebida(6*cantPasajeros)
     self.acercarseUnPocoAlSol()
+    super()
   }
-}
+
+  }
 
 class NaveDeCombate inherits Nave {
   var estaInvisible
@@ -105,6 +123,32 @@ class NaveDeCombate inherits Nave {
     self.ponerseVisible()
     self.replegarMisiles()
     self.acelerar(15000)
-    return "Saliendo en misión"
+    super()
   }
+
+  override method estaTranquilo() {
+     return super() and not self.misilesDesplegados()
+     } 
 }
+
+class NaveHospital inherits NavePasajero {
+  var quirofanoPreparado
+
+  method prepararQuirofano() {
+    quirofanoPreparado = true
+  }
+
+  method quirofanoPreparado() = quirofanoPreparado
+
+  override method estaTranquilo() {
+     return super() and not self.quirofanoPreparado()
+    }
+}
+
+class NaveNinja inherits NaveDeCombate {
+
+  override method estaTranquilo() {
+     return super() and not self.estaInvisible()
+     }
+}
+
